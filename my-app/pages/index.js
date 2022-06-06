@@ -10,7 +10,7 @@ let web3modal
 
 if(typeof window !== "undefined"){
   web3modal = new Web3Modal({
-    network: "ropsten",
+    network: "goerli",
     providerOptions: {},
     disableInjectedProvider: false
   })
