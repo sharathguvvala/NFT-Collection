@@ -21,8 +21,8 @@ export default function Home() {
   const [walletConnected,setWalletConnected] = useState(false)
   const [provider,setProvider] = useState()
   const [chainId,setChainId] = useState()
-  const [signer,setSigner] = useState()
-  const [currentAddress,setCurrentAddress] = useState()
+  // const [signer,setSigner] = useState()
+  // const [currentAddress,setCurrentAddress] = useState()
   const [presaleStarted,setPresaleStarted] = useState(false)
   const [isOwner,setIsOwner] = useState(false)
   const [presaleEnded,setPresaleEnded] = useState(false)
@@ -31,7 +31,8 @@ export default function Home() {
 
   const mintedTokens = async () => {
     try {
-      const NFTContract = new Contract(NFT_Contract_Address,NFT_Contract_ABI,provider)
+      const signer = await connectWallet();
+      const NFTContract = new Contract(NFT_Contract_Address,NFT_Contract_ABI, signer)
       const tokenIds = await NFTContract.tokenId()
       setTokenCount(tokenIds.toString())
     } catch (error) {
@@ -41,6 +42,7 @@ export default function Home() {
 
   const presaleMint = async () => {
     try {
+      const signer = await connectWallet();
       const NFTContract = new Contract(NFT_Contract_Address,NFT_Contract_ABI,signer)
       const txn = await NFTContract.presaleMint({value:ethers.utils.parseEther("0.005")})
       setLoading(true)
@@ -53,6 +55,7 @@ export default function Home() {
   }
   const mint = async () => {
     try {
+      const signer = await connectWallet();
       const NFTContract = new Contract(NFT_Contract_Address,NFT_Contract_ABI,signer)
       const txn = await NFTContract.mint({value:ethers.utils.parseEther("0.01")})
       setLoading(true)
@@ -66,14 +69,16 @@ export default function Home() {
 
   const getOwner = async () => {
     try{
-      console.log(walletConnected)
-      console.log(provider)
-      console.log(chainId)
-      console.log(signer)
-      console.log(currentAddress)
+      // console.log(walletConnected)
+      // console.log(provider)
+      // console.log(chainId)
+      // console.log(signer)
+      // console.log(currentAddress)
+      const signer = await connectWallet();
       const NFTContract = new Contract(NFT_Contract_Address,NFT_Contract_ABI,signer)
       const owner = await NFTContract.owner()
       console.log(owner)
+      const currentAddress = await getCurrentAddress();
       console.log(currentAddress)
       if(owner.toLowerCase() === currentAddress.toLowerCase()){
         setIsOwner(true)
@@ -86,6 +91,7 @@ export default function Home() {
 
   const startPresale = async () => {
     try{
+      const signer = await connectWallet();
       const NFTContract = new Contract(NFT_Contract_Address,NFT_Contract_ABI,signer)
       const txn = await NFTContract.startPresale()
       setLoading(true)
@@ -98,9 +104,22 @@ export default function Home() {
     }
   }
 
+  const getCurrentAddress = async () => {
+    try{
+      const signer = await connectWallet();
+      const address = await signer.getAddress();
+
+      return address;
+    }
+    catch(error){
+      console.log(error)
+    }
+  }
+
   const isPresaleStarted = async () => {
     try{
-      const NFTContract = new Contract(NFT_Contract_Address,NFT_Contract_ABI,provider)
+      const signer = await connectWallet();
+      const NFTContract = new Contract(NFT_Contract_Address,NFT_Contract_ABI, signer)
       const presaleStarted = await NFTContract.presaleStarted()
       setPresaleStarted(presaleStarted)
       return presaleStarted
@@ -112,7 +131,8 @@ export default function Home() {
 
   const isPresaleEnded = async () => {
     try {
-      const NFTContract = new Contract(NFT_Contract_Address,NFT_Contract_ABI,provider)
+      const signer = await connectWallet();
+      const NFTContract = new Contract(NFT_Contract_Address,NFT_Contract_ABI, signer)
       const presaleEndTime = await NFTContract.presaleEnded() //big number as presaleEnded is uint256, returns time in seconds
       const currentTimeInSeconds = Date.now() / 1000
       const hasPresaleEnded = presaleEndTime.lt(Math.floor(currentTimeInSeconds))
@@ -134,12 +154,16 @@ export default function Home() {
         throw new Error("inncorrect network")
       }
       const signer = provider.getSigner()
-      const address = await signer.getAddress()
-      setProvider(provider)
-      setChainId(chainId)
-      setSigner(setSigner)
-      setCurrentAddress(address)
+      
+      
+      
+      // setProvider(provider)
+      // setChainId(chainId)
+      // setSigner(signer)
+      // setCurrentAddress(address)
       setWalletConnected(true)
+
+      return signer;
     }
     catch(error){
       console.log(error)
@@ -147,7 +171,6 @@ export default function Home() {
   }
 
   const onPageLoad = async () => {
-    await connectWallet()
     await getOwner()
     const presaleStarted = await isPresaleStarted()
     console.log("presale status",presaleStarted)
