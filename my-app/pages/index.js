@@ -66,9 +66,16 @@ export default function Home() {
 
   const getOwner = async () => {
     try{
+      console.log(walletConnected)
+      console.log(provider)
+      console.log(chainId)
+      console.log(signer)
+      console.log(currentAddress)
       const NFTContract = new Contract(NFT_Contract_Address,NFT_Contract_ABI,signer)
       const owner = await NFTContract.owner()
-      if(owner === currentAddress){
+      console.log(owner)
+      console.log(currentAddress)
+      if(owner.toLowerCase() === currentAddress.toLowerCase()){
         setIsOwner(true)
       }
     }
@@ -81,7 +88,9 @@ export default function Home() {
     try{
       const NFTContract = new Contract(NFT_Contract_Address,NFT_Contract_ABI,signer)
       const txn = await NFTContract.startPresale()
+      setLoading(true)
       await txn.wait()
+      setLoading(false)
       setPresaleStarted(true)
     }
     catch(error){
@@ -92,9 +101,9 @@ export default function Home() {
   const isPresaleStarted = async () => {
     try{
       const NFTContract = new Contract(NFT_Contract_Address,NFT_Contract_ABI,provider)
-      const isPresaleStarted = await NFTContract.presaleStarted()
-      setPresaleStarted(isPresaleStarted)
-      return isPresaleStarted
+      const presaleStarted = await NFTContract.presaleStarted()
+      setPresaleStarted(presaleStarted)
+      return presaleStarted
     }
     catch(error){
       console.log(error)
@@ -124,7 +133,7 @@ export default function Home() {
         window.alert("connect with goerli network")
         throw new Error("inncorrect network")
       }
-      const signer = await provider.getSigner()
+      const signer = provider.getSigner()
       const address = await signer.getAddress()
       setProvider(provider)
       setChainId(chainId)
@@ -141,19 +150,20 @@ export default function Home() {
     await connectWallet()
     await getOwner()
     const presaleStarted = await isPresaleStarted()
+    console.log("presale status",presaleStarted)
     if(presaleStarted) {
       await isPresaleEnded()
     }
     await mintedTokens()
-    setInterval(async()=>{
-      await mintedTokens()
-    },5*1000)
-    setInterval(async()=>{
-      const presaleStarted = await isPresaleStarted()
-      if(presaleStarted) {
-        await isPresaleEnded()
-      }
-    },5*1000)
+    // setInterval(async()=>{
+    //   await mintedTokens()
+    // },5*1000)
+    // setInterval(async()=>{
+    //   const presaleStarted = await isPresaleStarted()
+    //   if(presaleStarted) {
+    //     await isPresaleEnded()
+    //   }
+    // },5*1000)
   }
 
   useEffect(()=>{
@@ -178,7 +188,7 @@ export default function Home() {
     if(!presaleStarted){
       return (
         <div>
-          <span className={styles.description}>Presale has nor started yet. Come back later!</span>
+          <span className={styles.description}>Presale has not started yet. Come back later!</span>
         </div>
       )
     }
