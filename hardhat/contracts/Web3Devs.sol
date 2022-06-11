@@ -25,7 +25,7 @@ contract Web3Devs is ERC721Enumerable, Ownable {
     }
     function startPresale() public onlyOwner {
         presaleStarted = true;
-        presaleEnded = block.timestamp + 5 minutes;
+        presaleEnded = block.timestamp + 3 hours;
     }
     function presaleMint() public payable notPaused {
         require(presaleStarted && block.timestamp < presaleEnded, "presale has ended");
