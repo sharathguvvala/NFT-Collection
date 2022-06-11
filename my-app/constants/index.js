@@ -1,4 +1,4 @@
-export const NFT_Contract_Address = "0xCc82816877D49Cb4DD3B0f66390d6F4012158c88"
+export const NFT_Contract_Address = "0x6DA07c6fE828fCeBD8de08976Ff23abe7FE19078"
 export const NFT_Contract_ABI = [
     {
       "inputs": [
