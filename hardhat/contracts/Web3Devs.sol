@@ -25,20 +25,20 @@ contract Web3Devs is ERC721Enumerable, Ownable {
     }
     function startPresale() public onlyOwner {
         presaleStarted = true;
-        presaleEnded = block.timestamp + 24 hours;
+        presaleEnded = block.timestamp + 5 minutes;
     }
     function presaleMint() public payable notPaused {
-        require(presaleStarted && presaleEnded < block.timestamp, "presale has ended");
+        require(presaleStarted && block.timestamp < presaleEnded, "presale has ended");
         require(whitelist.whitelistedAddresses(msg.sender), "not in the whitelist");
         require(tokenId < maxTokenIds, "no NFT's to mint");
-        require(msg.value > presalePrice, "not enough amount");
+        require(msg.value >= presalePrice, "not enough amount");
         tokenId++;
         _safeMint(msg.sender, tokenId);
     }
     function mint() public payable notPaused {
         require(presaleStarted && block.timestamp >= presaleEnded, "presale has not ended");
         require(tokenId < maxTokenIds, "no NFT's to mint");
-        require(msg.value > price, "not enough amount");
+        require(msg.value >= price, "not enough amount");
         tokenId++;
         _safeMint(msg.sender, tokenId);
     }

@@ -184,12 +184,16 @@ export default function Home() {
   function renderButton () {
     if(!walletConnected){
       return (
-        <button onClick={connectWallet} className={styles.button}>Connect Wallet</button>
+        <div>
+          <button onClick={connectWallet} className={styles.button}>Connect Wallet</button>
+        </div>
       )
     }
     if(isOwner && !presaleStarted){
       return (
-        <button onClick={startPresale} className={styles.button}>Start Presale</button>
+        <div>
+          <button onClick={startPresale} className={styles.button}>Start Presale</button>
+        </div>
       )
     }
     if(!presaleStarted){
@@ -247,7 +251,7 @@ export default function Home() {
           {renderButton()}
         </div>
         <div>
-          <img className={styles.image} src="./cryptodevs/0.svg" />
+          <img className={styles.image} src="./Web3Devs/14.svg" />
         </div>
       </div>
       <footer className={styles.footer}>
