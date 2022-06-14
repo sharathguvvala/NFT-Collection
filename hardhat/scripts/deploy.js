@@ -20,3 +20,4 @@ main()
       process.exit(1);
 });
   
+// contract address 0x6DA07c6fE828fCeBD8de08976Ff23abe7FE19078

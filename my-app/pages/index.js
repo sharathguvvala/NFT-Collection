@@ -132,6 +132,20 @@ export default function Home() {
     }
   }
 
+  const withdrawBalances = async() => {
+    try {
+      const signer = await connectWallet(true)
+      const NFTContract = new Contract(NFT_Contract_Address,NFT_Contract_ABI,signer)
+      const txn = await NFTContract.withdraw()
+      setLoading(true)
+      await txn.wait()
+      setLoading(false)
+      console.log("withdraw balances successfull")
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const connectWallet = async (needSigner = false) => {
     try{
       const instance = await web3modal.connect()
@@ -193,6 +207,18 @@ export default function Home() {
       return (
         <div>
           <button onClick={startPresale} className={styles.button}>Start Presale</button>
+        </div>
+      )
+    }
+    if(isOwner && presaleEnded){
+      return(
+        <div>
+          <span className={styles.description}>
+            Presale has ended! You can mint a Web3Dev in public sale, if any remain.
+          </span>
+          <button onClick={mint} className={styles.button}>Mint 🚀</button>
+          <br/>
+          <button onClick={withdrawBalances} className={styles.button}>Withdraw Balances</button>
         </div>
       )
     }
